@@ -359,3 +359,60 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--blush); bor
   .auth-btn { width: 100%; }
 }
 [hidden] { display: none !important; }
+
+/* vendor lists (Figma: Photoraphers, Venue, Catering, Baker, Dj, Make-up, Wedding Dress) */
+.vsearch { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; padding-top: 24px; width: min(1640px, 100% - 32px); }
+.searchbar { display: grid; grid-template-columns: 44px 1fr 1fr auto; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; background: #fff; }
+.searchbar .mag { display: grid; place-items: center; opacity: .6; }
+.searchbar input { border: 0; border-left: 1px solid #ccc; border-radius: 0; padding: 18px 14px; font-size: 14px; }
+.searchbar .btn { border-radius: 0; font-weight: 400; font-size: 20px; padding: 0 40px; }
+.vquote { font-size: 17px; margin-top: 22px; }
+.vbanner { width: 100%; border-radius: 120px 0 0 0; height: 360px; object-fit: cover; }
+.pinkline { border: 0; height: 10px; background: var(--pink); margin: 40px 0 30px; }
+.vlayout { display: grid; grid-template-columns: 300px 1fr; gap: 60px; }
+.vfilters details { margin-bottom: 26px; }
+.vfilters summary { font-size: 16px; cursor: pointer; margin-bottom: 12px; }
+.vfilters input[type=range] { accent-color: var(--pink); padding: 0; border: 0; }
+.price-box { display: flex; gap: 40px; margin-top: 8px; }
+.price-box input { padding: 2px 6px; border: 1px solid var(--pink); border-radius: 0; font-size: 14px; width: 90px; }
+.vfilters .check { display: flex; gap: 10px; align-items: center; font-weight: 400; margin: 0 0 10px; }
+.star { color: #f8b400; }
+.cal { border: 1px solid #ccc; border-radius: 4px; padding: 10px; background: #fff; }
+.cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cal-head button, .cal-grid button { border: 0; background: none; cursor: pointer; font: 14px var(--sans); padding: 4px 0; border-radius: 4px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 2px; }
+.cal-grid i { font-style: normal; font-size: 12px; color: #555; }
+.cal-grid .past { color: #bbb; cursor: default; }
+.cal-grid .sel { background: var(--pink); color: #fff; }
+.vcount { font-size: 26px; letter-spacing: .04em; margin: 0 0 30px; }
+.vrow { display: grid; grid-template-columns: 250px 1fr 250px; gap: 18px; align-items: center; margin-bottom: 70px; }
+.vrow > img { width: 100%; max-height: 270px; object-fit: cover; }
+.vinfo h3 { font-size: 16px; margin: 0 0 8px; font-weight: 700; }
+.vmeta { margin: 0 0 8px; font-size: 16px; }
+.vmeta .area { margin-left: 18px; }
+.vaddr { font-weight: 700; margin: 0 0 4px; font-size: 16px; }
+.vline { margin: 0; font-size: 15px; color: #111; }
+.vguest { margin: 12px 0 0; font-size: 15px; }
+.vguest .cap { margin-left: 14px; }
+.vbtn { text-align: center; font-weight: 400; font-size: 18px; padding: 10px 0; border-radius: 4px; }
+@media (max-width: 1000px) {
+  .vsearch, .vlayout { grid-template-columns: 1fr; }
+  .vrow { grid-template-columns: 1fr; }
+  .searchbar { grid-template-columns: 44px 1fr; }
+  .searchbar #loc { display: none; }
+  .searchbar .btn { grid-column: 1 / -1; padding: 12px; }
+  .vbanner { height: 220px; border-radius: 60px 0 0 0; }
+}
+.vfilters .check input { width: auto; }
+.vrow { grid-template-columns: 220px 1fr 190px; }
+/* booking (Figma: Booking <vendor>) */
+.bk-hero { width: 100%; max-height: 560px; object-fit: cover; border-radius: 8px; }
+.bk-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; margin-top: 30px; }
+.bk-note { background: #fbd9f0; border-radius: 6px; padding: 10px 16px; font-size: 14px; }
+.bk-side { border: 1px solid var(--line); border-radius: 10px; padding: 22px; background: #fff; align-self: start; }
+.bk-side .btn { width: 100%; text-align: center; margin-top: 12px; }
+.bk-side label { margin-top: 12px; }
+.congrats { text-align: center; padding: 60px 16px; }
+.congrats h1 { font-family: var(--script); font-weight: 400; font-size: clamp(40px, 6vw, 72px); color: var(--pink); margin: 0; }
+.congrats h2 { color: #2f9e44; }
+@media (max-width: 860px) { .bk-layout { grid-template-columns: 1fr; } }

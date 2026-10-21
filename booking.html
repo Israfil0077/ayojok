@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book a vendor · Ayojok</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=5">
+</head>
+<body data-page="services">
+  <section class="section" style="padding-top:30px">
+    <div class="container" id="booking"></div>
+  </section>
+
+  <script src="assets/js/vendors-data.js?v=1"></script>
+  <script src="assets/js/main.js?v=5"></script>
+  <script>
+    const p = new URLSearchParams(location.search);
+    const type = VENDORS[p.get("type")] ? p.get("type") : "photographers";
+    const v = VENDORS[type].find((x) => String(x.n) === p.get("v")) || VENDORS[type][0];
+    document.title = `${v.name} · Ayojok`;
+    const box = document.getElementById("booking");
+    box.innerHTML = `
+      <p class="muted"><a href="services.html">Services</a> › <a href="vendors.html?type=${type}">${CATEGORIES[type].title}</a> › ${v.name}</p>
+      <img class="bk-hero" src="assets/img/booking-${type}.jpg" alt="${v.name}">
+      <div class="bk-layout">
+        <div>
+          <p class="bk-note">&#128197; Booking requests are answered within 24 hours.</p>
+          <h2 class="serif-sub" style="font-family:var(--sans)">About ${v.name}</h2>
+          <p><span class="star">&#9733;</span> ${v.rating.toFixed(1)} <span class="muted">${v.reviews} · ${v.area}</span></p>
+          ${v.address ? `<p><b>${v.address}</b></p>` : ""}
+          <h3>Pricing information</h3>
+          ${v.lines.map((l) => `<p class="vline">${l}</p>`).join("")}
+          ${v.perGuest ? `<p class="vline">${v.perGuest} · up to ${v.capacity} guests</p>` : ""}
+        </div>
+        <form class="bk-side" id="bkForm">
+          <h3 style="margin-top:0">Get in touch</h3>
+          <label>Event date<input type="date" id="bkDate" required></label>
+          <label>Guests<input type="number" min="1" value="200" required></label>
+          <label>Your name<input required></label>
+          <label>Phone<input type="tel" required></label>
+          <label>Message<textarea rows="3" placeholder="Tell ${v.name} about your event"></textarea></label>
+          <button class="btn">Confirm Booking</button>
+        </form>
+      </div>`;
+    document.getElementById("bkDate").min = new Date().toISOString().slice(0, 10);
+    document.getElementById("bkForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      box.innerHTML = `<div class="congrats"><h1>Congratulations to the happy couple!</h1>
+        <h2>Your Booking has been Confirmed</h2>
+        <p>${v.name} will contact you about ${document.getElementById("bkDate")?.value || "your date"}.</p>
+        <a class="btn" href="vendors.html?type=${type}">Back to ${CATEGORIES[type].title}</a></div>`;
+      window.scrollTo(0, 0);
+    });
+  </script>
+</body>
+</html>

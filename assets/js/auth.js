@@ -18,7 +18,7 @@ if ($("loginForm")) {
     const profile = JSON.parse(localStorage.getItem("ayojok-profile") || "null");
     const name = profile && profile.email === email ? profile.first : email.split("@")[0];
     save("ayojok-user", { name, email });
-    location.href = "dashboard.html";
+    location.href = "index.html";
   });
 }
 

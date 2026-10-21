@@ -3,32 +3,113 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Services · Ayojok</title>
+  <title>Vendors · Ayojok</title>
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=4">
+  <link rel="stylesheet" href="assets/css/style.css?v=5">
 </head>
-<body data-page="vendors">
-  <section class="hero page-hero">
-    <div class="container"><h1>Find vendors for everything</h1><p>Photographers, venues, cakes, DJs, makeup, attire and catering in one place.</p></div>
+<body data-page="services">
+  <section class="container vsearch">
+    <div class="vsearch-left">
+      <form class="searchbar" id="searchForm">
+        <span class="mag" aria-hidden="true">&#128269;</span>
+        <input id="q" placeholder="Search for venues" aria-label="Search vendors">
+        <input id="loc" placeholder="In Location" aria-label="Location">
+        <button class="btn">Search</button>
+      </form>
+      <p class="vquote" id="quote"></p>
+    </div>
+    <img class="vbanner" src="assets/img/vendor-banner.jpg" alt="">
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="filters" id="filters"></div>
-      <div class="vendor-list" id="vendorList"></div>
+  <div class="container"><hr class="pinkline"></div>
+
+  <section class="container vlayout">
+    <aside class="vfilters">
+      <details open><summary>City/Town</summary>
+        <input id="city" placeholder="Search city" aria-label="Search city"></details>
+      <details open><summary>Price (BDT, from)</summary>
+        <input type="range" id="range" min="0" max="200000" step="1000" value="200000" aria-label="Maximum price">
+        <div class="price-box"><input id="pmin" value="0" readonly aria-label="Minimum"><input id="pmax" value="200,000" readonly aria-label="Maximum"></div></details>
+      <details open><summary>Ratings <span class="star">&#9733;</span></summary>
+        <label class="check"><input type="radio" name="rate" value="5"> 5- Star</label>
+        <label class="check"><input type="radio" name="rate" value="4"> 4- Star &amp; up</label>
+        <label class="check"><input type="radio" name="rate" value="0" checked> All</label></details>
+      <details open><summary>Availability</summary>
+        <div class="cal" id="cal"></div></details>
+    </aside>
+
+    <div>
+      <p class="vcount" id="count"></p>
+      <div id="vlist"></div>
     </div>
   </section>
-  <div class="modal" id="bookModal">
-    <form class="panel" data-demo-form="Booking request sent! The vendor will contact you soon. (demo)">
-      <h3>Book <span id="bookVendor"></span></h3>
-      <label for="b-date">Event date</label><input id="b-date" type="date" required>
-      <label for="b-guests">Number of guests</label><input id="b-guests" type="number" min="1" value="200" required>
-      <label for="b-note">Message</label><textarea id="b-note" rows="3" placeholder="Tell the vendor about your event"></textarea>
-      <div class="form-actions"><button class="btn">Send request</button> <button type="button" class="btn btn-outline" id="closeModal">Close</button></div>
-    </form>
-  </div>
-  <script src="assets/js/main.js?v=4"></script>
+
+  <script src="assets/js/vendors-data.js?v=1"></script>
+  <script src="assets/js/main.js?v=5"></script>
+  <script>
+    const type = new URLSearchParams(location.search).get("type") || "photographers";
+    const cat = CATEGORIES[type] || CATEGORIES.photographers;
+    const list = VENDORS[type] || VENDORS.photographers;
+    document.title = `${cat.title} · Ayojok`;
+    document.getElementById("quote").textContent = `“${cat.quote}”`;
+    document.getElementById("q").placeholder = cat.search;
+
+    const render = () => {
+      const q = document.getElementById("q").value.trim().toLowerCase();
+      const loc = (document.getElementById("loc").value + " " + document.getElementById("city").value).trim().toLowerCase();
+      const max = Number(document.getElementById("range").value);
+      const rate = Number(document.querySelector("[name=rate]:checked").value);
+      const items = list.filter((v) =>
+        (!q || (v.name + " " + v.lines.join(" ")).toLowerCase().includes(q)) &&
+        (!loc || loc.split(" ").every((w) => (v.area + " " + (v.address || "")).toLowerCase().includes(w))) &&
+        (v.price || 0) <= max && (rate === 0 || (rate === 5 ? v.rating >= 5 : v.rating >= rate)));
+      document.getElementById("count").textContent = `${items.length} results`;
+      document.getElementById("vlist").innerHTML = items.map((v) => `
+        <article class="vrow">
+          <img src="assets/img/vendors/${type}-${v.n}.jpg" alt="${v.name}" loading="lazy">
+          <div class="vinfo">
+            <h3>${v.name}</h3>
+            <p class="vmeta"><span class="star">&#9733;</span> ${v.rating.toFixed(1)} <span class="muted">${v.reviews}</span><span class="muted area">${v.area}</span></p>
+            ${v.address ? `<p class="vaddr">${v.address}</p>` : ""}
+            ${v.lines.map((l) => `<p class="vline">${l}</p>`).join("")}
+            ${v.perGuest ? `<p class="vguest"><span>&#9711;</span> ${v.perGuest} <span class="cap">&#128101; ${v.capacity}</span></p>` : ""}
+          </div>
+          <a class="btn vbtn" href="booking.html?type=${type}&v=${v.n}">Request pricing</a>
+        </article>`).join("") || `<p class="muted">No vendors found. Try a different search.</p>`;
+    };
+    ["q", "loc", "city", "range"].forEach((id) => document.getElementById(id).addEventListener("input", () => {
+      if (id === "range") document.getElementById("pmax").value = Number(document.getElementById("range").value).toLocaleString("en-US");
+      render();
+    }));
+    document.querySelectorAll("[name=rate]").forEach((r) => r.addEventListener("change", render));
+    document.getElementById("searchForm").addEventListener("submit", (e) => { e.preventDefault(); render(); });
+
+    // availability calendar (current month)
+    const cal = document.getElementById("cal");
+    let view = new Date(); view.setDate(1);
+    const drawCal = () => {
+      const y = view.getFullYear(), m = view.getMonth(), first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      let cells = "";
+      for (let i = 0; i < first; i++) cells += "<span></span>";
+      for (let d = 1; d <= days; d++) {
+        const past = new Date(y, m, d) < today;
+        cells += `<button type="button" class="${past ? "past" : ""}" ${past ? "disabled" : ""}>${d}</button>`;
+      }
+      cal.innerHTML = `<div class="cal-head"><button type="button" id="prevM" aria-label="Previous month">&#8249;</button>
+        <b>${view.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</b>
+        <button type="button" id="nextM" aria-label="Next month">&#8250;</button></div>
+        <div class="cal-grid">${["SU", "MO", "TU", "WE", "TH", "FR", "SA"].map((d) => `<i>${d}</i>`).join("")}${cells}</div>`;
+      document.getElementById("prevM").onclick = () => { view.setMonth(view.getMonth() - 1); drawCal(); };
+      document.getElementById("nextM").onclick = () => { view.setMonth(view.getMonth() + 1); drawCal(); };
+      cal.querySelectorAll(".cal-grid button").forEach((b) => (b.onclick = () => {
+        cal.querySelectorAll(".sel").forEach((s) => s.classList.remove("sel")); b.classList.add("sel");
+      }));
+    };
+    drawCal();
+    render();
+  </script>
 </body>
 </html>
