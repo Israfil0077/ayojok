@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book a consultation · Ayojok</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="consult">
+  <section class="hero page-hero">
+    <div class="container"><h1>Book for Consult</h1><p>Meet a wedding consultant and plan every detail together.</p></div>
+  </section>
+
+  <section class="section">
+    <div class="container grid-2">
+      <form class="panel" data-demo-form="Your consultation is booked! You will receive a confirmation email. (demo)">
+        <h3>Your details</h3>
+        <label for="k-name">Full name</label><input id="k-name" required>
+        <label for="k-phone">Phone</label><input id="k-phone" type="tel" required>
+        <label for="k-type">Event type</label>
+        <select id="k-type"><option>Wedding</option><option>Holud</option><option>Reception</option><option>Engagement</option><option>Other event</option></select>
+        <label for="k-date">Preferred date</label><input id="k-date" type="date" required>
+        <label for="k-time">Preferred time</label>
+        <select id="k-time"><option>10:00 am</option><option>12:00 pm</option><option>3:00 pm</option><option>5:00 pm</option></select>
+        <label for="k-mode">Meeting</label>
+        <select id="k-mode"><option>At the Ayojok studio</option><option>Online (video call)</option></select>
+        <div class="form-actions"><button class="btn">Book consultation</button></div>
+      </form>
+      <div class="panel">
+        <h3>What happens next</h3>
+        <ol>
+          <li>A consultant calls you to confirm the time.</li>
+          <li>Together you set the budget, guest list and style.</li>
+          <li>We shortlist vendors and send you a full plan.</li>
+        </ol>
+        <img src="assets/img/idea-4.jpg" alt="Garden wedding" style="border-radius:14px;margin-top:20px">
+      </div>
+    </div>
+  </section>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
