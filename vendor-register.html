@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vendor registration · Ayojok</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
+</head>
+<body class="auth-body">
+  <main class="auth">
+    <img class="auth-photo" id="authPhoto" src="assets/img/auth/vendor.jpg" alt="">
+    <section class="auth-panel">
+      <a class="auth-logo" href="index.html">Ayojok</a>
+      <p class="auth-success soft" id="done" hidden>Application successfully Submitted</p>
+      <form class="auth-form" id="vendorForm">
+        <label>Business name<input name="business" required></label>
+        <label>Service
+          <select name="service" required><option value="">Choose your service</option><option>Photographers</option><option>Venues</option>
+            <option>Catering</option><option>Bakers</option><option>DJs</option><option>Make-up artists</option><option>Wedding dress</option></select></label>
+        <label>Email<input type="email" name="email" required autocomplete="email"></label>
+        <label>Password (8 or more characters)
+          <span class="pw"><input type="password" name="password" minlength="8" required autocomplete="new-password">
+          <button type="button" class="eye" aria-label="Show password">&#128065;</button></span></label>
+        <button class="auth-btn">Let's go</button>
+      </form>
+      <p class="auth-link">Already have an account? <a href="login.html"><b>Log in</b></a></p>
+      <p class="auth-terms">By creating Ayojok account you agree to our <a href="about.html">Terms of use</a> and <a href="about.html">Privacy policy</a>.</p>
+    </section>
+  </main>
+  <script src="assets/js/auth.js?v=1"></script>
+</body>
+</html>

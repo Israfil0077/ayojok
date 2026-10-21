@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up · Ayojok</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
+</head>
+<body class="auth-body">
+  <main class="auth">
+    <img class="auth-photo" id="authPhoto" src="assets/img/auth/step1.jpg" alt="">
+    <section class="auth-panel">
+      <a class="auth-logo" href="index.html">Ayojok</a>
+      <ol class="stepper" id="stepper"><li class="on">Get started</li><li>More information</li><li>Finish up</li></ol>
+      <form class="auth-form" id="signupForm" novalidate>
+        <fieldset data-step="1" data-photo="step1" data-stage="1">
+          <h2>Follow these simple steps to get started</h2>
+          <div class="two"><label>First name<input name="first" required></label><label>Last name<input name="last" required></label></div>
+          <div class="two"><label>Partner’s first name<input name="pfirst"></label><label>Partner’s last name<input name="plast"></label></div>
+          <div class="two"><label>Wedding date <small>(Don’t worry! You can change this later)</small><input type="date" name="date"></label>
+            <label class="check"><input type="checkbox" name="dateUndecided"> We’re still deciding</label></div>
+        </fieldset>
+        <fieldset data-step="2" data-photo="step2" data-stage="1" hidden>
+          <h2>Follow these simple steps to get started</h2>
+          <label>Where do you want to get married?
+            <select name="city"><option value="">City or surrounding area</option><option>Dhaka</option><option>Chittagong</option><option>Sylhet</option><option>Cox's Bazar</option></select></label>
+          <label class="check"><input type="checkbox" name="cityUndecided"> We’re still deciding</label>
+        </fieldset>
+        <fieldset data-step="3" data-photo="step3" data-stage="2" hidden>
+          <h2>Follow these simple steps to get started</h2>
+          <label>Enter your guest count<input type="number" min="0" name="guests"></label>
+          <label class="check"><input type="checkbox" name="guestsUndecided"> We’re still deciding</label>
+        </fieldset>
+        <fieldset data-step="4" data-photo="step4" data-stage="3" hidden>
+          <h2>Follow these simple steps to get started</h2>
+        <label>Email<input type="email" name="email" required autocomplete="email"></label>
+        <label>Password (8 or more characters)
+          <span class="pw"><input type="password" name="password" minlength="8" required autocomplete="new-password">
+          <button type="button" class="eye" aria-label="Show password">&#128065;</button></span></label>
+        </fieldset>
+        <fieldset data-step="5" data-photo="step5" data-stage="3" hidden>
+          <h2 class="big">One last thing. How did you hear about us?</h2>
+          <div class="checks">
+            <label class="check"><input type="checkbox"> Instagram</label><label class="check"><input type="checkbox"> Google search</label>
+            <label class="check"><input type="checkbox"> Facebook</label><label class="check"><input type="checkbox"> Youtube</label>
+            <label class="check"><input type="checkbox"> TikTok</label><label class="check"><input type="checkbox"> Pinterest</label>
+            <label class="check"><input type="checkbox"> Friends and family</label><input placeholder="Other" aria-label="Other">
+          </div>
+        </fieldset>
+        <p class="auth-error" id="err" hidden></p>
+        <button class="auth-btn" id="nextBtn">Next</button>
+      </form>
+      <p class="auth-link">Already have an account? <a href="login.html"><b>Log in</b></a></p>
+      <p class="auth-terms">By creating Ayojok account you agree to our <a href="about.html">Terms of use</a> and <a href="about.html">Privacy policy</a>.</p>
+    </section>
+  </main>
+  <script src="assets/js/auth.js?v=1"></script>
+</body>
+</html>

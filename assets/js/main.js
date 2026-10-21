@@ -3,21 +3,18 @@ const page = document.body.dataset.page;
 const user = JSON.parse(localStorage.getItem("ayojok-user") || "null");
 
 const header = `
-  <div class="demo-note">Front-end demo of the AYOJOK design · 3rd Runner-Up, UIU CSE Project Show, Summer 2025 · nothing is saved</div>
   <header class="site-header">
     <nav class="container nav">
       <a class="nav-logo" href="index.html"><img src="assets/img/logo.png" alt="Ayojok"></a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="vendors.html" data-nav="vendors">Services</a></li>
-        <li><a href="budget.html" data-nav="budget">Budget</a></li>
-        <li><a href="design.html" data-nav="design">Full design</a></li>
+        <li><a href="services.html" data-nav="services">Services</a></li>
         <li><a href="about.html" data-nav="about">About</a></li>
         <li><a href="contact.html" data-nav="contact">Contact</a></li>
       </ul>
       <div class="nav-actions">
         ${user
-          ? `<button class="btn" id="logout">Log out</button><span class="avatar" title="${user.name}">${user.name[0].toUpperCase()}</span>`
-          : `<a class="btn" href="login.html">Log in</a>`}
+          ? `<a class="btn btn-sm" href="dashboard.html">Dashboard</a><button class="btn btn-sm" id="logout">Log out</button><span class="avatar" title="${user.name}">${user.name[0].toUpperCase()}</span>`
+          : `<a class="btn btn-sm" href="login.html">Login</a><a class="btn btn-sm" href="signup.html">Sign up</a>`}
         <button class="menu-toggle" id="menuToggle" aria-label="Menu">&#9776;</button>
       </div>
     </nav>
@@ -38,10 +35,11 @@ const footer = `
         <form class="subscribe" data-demo-form="Thanks for subscribing! (demo)">
           <input type="email" placeholder="Subscribe with your email" required><button class="btn btn-outline">Submit</button>
         </form>
-        <div class="socials" aria-label="Social links" style="font-size:14px">Facebook · Twitter · Pinterest · Instagram</div>
+        <img class="socials" src="assets/img/socials.png" alt="Facebook, Twitter, Pinterest, Instagram" width="95" height="24">
       </div>
     </div>
-    <p class="copyright">© 2025 Ayojok · Designed in Figma for the System Analysis and Design course, United International University</p>
+    <p class="copyright">© 2025 Ayojok · Based on the AYOJOK 2.0 Figma design, 3rd Runner-Up at the UIU CSE Project Show, Summer 2025 ·
+      <a href="design.html">See all 42 design screens</a> · Demo site: forms and bookings are not saved</p>
   </footer>`;
 
 document.body.insertAdjacentHTML("afterbegin", header);

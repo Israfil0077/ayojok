@@ -3,43 +3,79 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Book a consultation · Ayojok</title>
+  <title>Book for Consult · Ayojok</title>
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
 </head>
 <body data-page="consult">
-  <section class="hero page-hero">
-    <div class="container"><h1>Book for Consult</h1><p>Meet a wedding consultant and plan every detail together.</p></div>
-  </section>
+  <section class="section consult-page">
+    <div class="container">
+      <h1 class="consult-title">Booking Details</h1>
+      <form class="consult-layout" id="consultForm">
+        <div>
+          <div class="step-chip"><span>1</span> Booking Information</div>
+          <h3 class="consult-sub">Contact Details</h3>
+          <div class="consult-grid g-code">
+            <select required aria-label="Country code"><option value="">Country Code</option><option>+880 Bangladesh</option><option>+91 India</option><option>+1 USA</option><option>+44 UK</option></select>
+            <input type="tel" placeholder="Contact Number" required>
+          </div>
+          <input class="full" type="email" placeholder="Email Address" required>
+          <div class="consult-grid g-name">
+            <select aria-label="Title"><option>Title</option><option>Mr</option><option>Ms</option><option>Mrs</option></select>
+            <input placeholder="First Name" required>
+            <input placeholder="Last Name" required>
+          </div>
+          <div class="consult-grid g-two">
+            <input type="text" placeholder="Date Of Birth" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
+            <select aria-label="Country"><option>Select Country</option><option>Bangladesh</option><option>India</option><option>Other</option></select>
+          </div>
+          <div class="confirm-row"><button class="btn confirm">CONFIRM</button></div>
+        </div>
 
-  <section class="section">
-    <div class="container grid-2">
-      <form class="panel" data-demo-form="Your consultation is booked! You will receive a confirmation email. (demo)">
-        <h3>Your details</h3>
-        <label for="k-name">Full name</label><input id="k-name" required>
-        <label for="k-phone">Phone</label><input id="k-phone" type="tel" required>
-        <label for="k-type">Event type</label>
-        <select id="k-type"><option>Wedding</option><option>Holud</option><option>Reception</option><option>Engagement</option><option>Other event</option></select>
-        <label for="k-date">Preferred date</label><input id="k-date" type="date" required>
-        <label for="k-time">Preferred time</label>
-        <select id="k-time"><option>10:00 am</option><option>12:00 pm</option><option>3:00 pm</option><option>5:00 pm</option></select>
-        <label for="k-mode">Meeting</label>
-        <select id="k-mode"><option>At the Ayojok studio</option><option>Online (video call)</option></select>
-        <div class="form-actions"><button class="btn">Book consultation</button></div>
+        <aside>
+          <div class="summary-chip">Booking Summary</div>
+          <div class="token">Token Number - <span id="token">1</span></div>
+          <p class="addr">United City, 100ft Madani Ave ,Dhaka Bangladesh</p>
+          <div class="slot-list">
+            <label>Date<input type="date" id="date" required></label>
+            <label>Time<select id="time"><option>10:00 AM</option><option>12:00 PM</option><option>3:00 PM</option><option>5:00 PM</option></select></label>
+            <label>Day<output id="day">-</output></label>
+            <label class="slot">Slot<select id="slot"><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label>
+          </div>
+        </aside>
       </form>
-      <div class="panel">
-        <h3>What happens next</h3>
-        <ol>
-          <li>A consultant calls you to confirm the time.</li>
-          <li>Together you set the budget, guest list and style.</li>
-          <li>We shortlist vendors and send you a full plan.</li>
-        </ol>
-        <img src="assets/img/idea-4.jpg" alt="Garden wedding" style="border-radius:14px;margin-top:20px">
+      <p class="sent" id="confirmed" hidden>Appointment Confirmed</p>
+
+      <div class="info-cards">
+        <div><img src="assets/img/consult/pin.png" alt=""><p><b>Post Address</b>United City,100ft Madani Ave,<br>Dhaka, Bangladesh -1212</p></div>
+        <div><img src="assets/img/consult/phone.png" alt=""><p><b>General Enquires</b>Email: ayojokinfo@gmail.com<br>Phone: +880 1303897972</p></div>
+        <div><img src="assets/img/consult/clock.png" alt=""><p><b>Operation Hours</b>24 hours in a day,<br>7 days in a week</p></div>
       </div>
     </div>
   </section>
-  <script src="assets/js/main.js?v=3"></script>
+
+  <script src="assets/js/main.js?v=4"></script>
+  <script>
+    const date = document.getElementById("date");
+    date.min = new Date().toISOString().slice(0, 10);
+    date.addEventListener("change", () => {
+      document.getElementById("day").textContent = date.value
+        ? new Date(date.value + "T00:00").toLocaleDateString("en-US", { weekday: "long" }) : "-";
+    });
+    let token = Number(localStorage.getItem("ayojok-token") || 1);
+    document.getElementById("token").textContent = token;
+    document.getElementById("consultForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const c = document.getElementById("confirmed");
+      c.textContent = `Appointment Confirmed · Token ${token} · ${date.value} at ${document.getElementById("time").value}`;
+      c.hidden = false;
+      token += 1;
+      try { localStorage.setItem("ayojok-token", token); } catch (err) {}
+      document.getElementById("token").textContent = token;
+      c.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  </script>
 </body>
 </html>

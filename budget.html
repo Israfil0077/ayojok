@@ -3,36 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Budget calculator · Ayojok</title>
+  <title>Budget Calculator · Ayojok</title>
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
 </head>
-<body data-page="budget">
-  <section class="hero page-hero">
-    <div class="container"><h1>Budget calculator</h1><p>See how to split your wedding budget across every category.</p></div>
-  </section>
-
-  <section class="section">
-    <div class="container grid-2">
-      <form class="panel" id="budgetForm" onsubmit="return false">
-        <h3>Your wedding</h3>
-        <label for="total">Total budget (BDT)</label><input id="total" name="total" type="number" min="0" step="10000" value="1000000">
-        <label for="guests">Number of guests</label><input id="guests" name="guests" type="number" min="0" value="300">
-        <label for="city">City</label>
-        <select id="city"><option>Dhaka</option><option>Chittagong</option><option>Sylhet</option><option>Cox's Bazar</option></select>
-        <p class="muted" style="margin-top:18px">The split follows typical wedding spending; adjust the total to see each category update.</p>
-      </form>
-      <div class="panel">
-        <h3>Suggested split</h3>
-        <div class="budget-rows" id="budgetRows"></div>
-        <div class="budget-total"><span>Total</span><b id="budgetTotal"></b></div>
-        <div class="budget-total" style="font-size:16px"><span class="muted">Cost per guest</span><b id="perGuest"></b></div>
-        <div class="form-actions"><a class="btn" href="consult.html">Plan it with a consultant</a></div>
+<body data-page="services">
+  <section class="section budget-page">
+    <div class="container budget-layout">
+      <div>
+        <h1 class="budget-title">Budget Breakdown</h1>
+        <div id="budgetInputs"></div>
       </div>
+      <aside class="budget-summary">
+        <h2>Budget Summary</h2>
+        <ul id="summaryList"></ul>
+        <div class="summary-total"><span>Total Budget</span><b id="totalBudget">৳0</b></div>
+        <div class="tips">
+          <h3>Budget Tips:</h3>
+          <ul>
+            <li>Food typically accounts for 40-50% of total budget.</li>
+            <li>Photography should be 10-15% of your budget.</li>
+            <li>Venue cost vary greatly by location.</li>
+            <li>Set aside 5-10% for unexpected expenses.</li>
+          </ul>
+        </div>
+      </aside>
     </div>
   </section>
-  <script src="assets/js/main.js?v=3"></script>
+
+  <script src="assets/js/main.js?v=4"></script>
+  <script>
+    const CATS = [["food", "Food & Catering"], ["decoration", "Decoration & Flowers"], ["photo", "Photography & Video"],
+      ["venue", "Venue & Rentals"], ["music", "Entertainment & Music"], ["transport", "Transportation"],
+      ["attire", "Bridal Attire"], ["other", "Other Expenses"]];
+    const saved = JSON.parse(localStorage.getItem("ayojok-budget") || "{}");
+    document.getElementById("budgetInputs").innerHTML = CATS.map(([k, label]) => `
+      <label class="budget-field">
+        <span class="budget-label">${k === "other" ? "" : `<img src="assets/img/budget/${k}.png" alt="">`}${label}</span>
+        <span class="budget-input"><img src="assets/img/budget/taka.png" alt="Taka">
+          <input type="number" min="0" step="1000" inputmode="numeric" data-k="${k}" value="${saved[k] || 0}" aria-label="${label} in taka"></span>
+      </label>`).join("");
+    const fmt = (n) => "৳" + n.toLocaleString("en-US");
+    const update = () => {
+      const vals = {};
+      document.querySelectorAll("#budgetInputs input").forEach((i) => (vals[i.dataset.k] = Math.max(0, Number(i.value) || 0)));
+      document.getElementById("summaryList").innerHTML = CATS.map(([k, label]) => `<li><span>${label}</span><b>${fmt(vals[k])}</b></li>`).join("");
+      document.getElementById("totalBudget").textContent = fmt(Object.values(vals).reduce((a, b) => a + b, 0));
+      try { localStorage.setItem("ayojok-budget", JSON.stringify(vals)); } catch (e) {}
+    };
+    document.getElementById("budgetInputs").addEventListener("input", update);
+    update();
+  </script>
 </body>
 </html>

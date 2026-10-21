@@ -6,25 +6,27 @@
   <title>Log in · Ayojok</title>
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
 </head>
-<body data-page="login">
-  <section class="hero page-hero">
-    <div class="container"><h1>Welcome back</h1><p>Log in to manage your bookings.</p></div>
-  </section>
-
-  <section class="section">
-    <div class="container" style="max-width:480px">
-      <form class="panel" id="loginForm">
-        <h3>Log in</h3>
-        <p class="muted">Demo only: enter any name to see the logged-in view. No password is needed or stored.</p>
-        <label for="l-name">Your name</label><input id="l-name" name="name" required>
-        <div class="form-actions"><button class="btn">Continue</button></div>
-        <p class="muted" style="margin-top:18px">New here? <a href="consult.html">Book a free consultation</a></p>
+<body class="auth-body">
+  <main class="auth">
+    <img class="auth-photo" id="authPhoto" src="assets/img/auth/login.jpg" alt="">
+    <section class="auth-panel">
+      <a class="auth-logo" href="index.html">Ayojok</a>
+      <p class="auth-success" id="created" hidden>Your account has been created successfully</p>
+      <form class="auth-form" id="loginForm">
+        <label>Email<input type="email" name="email" required autocomplete="email"></label>
+        <label>Password (8 or more characters)
+          <span class="pw"><input type="password" name="password" minlength="8" required autocomplete="current-password">
+          <button type="button" class="eye" aria-label="Show password">&#128065;</button></span></label>
+        <button class="auth-btn">Let's go</button>
       </form>
-    </div>
-  </section>
-  <script src="assets/js/main.js?v=3"></script>
+      <p class="auth-link"><a href="forgot.html">Forget Password ? <b>Reset</b></a></p>
+      <p class="auth-link">New to Ayojok? <a href="signup.html"><b>Sign up</b></a> · <a href="vendor-register.html">Register as a vendor</a></p>
+      <p class="auth-terms">By creating Ayojok account you agree to our <a href="about.html">Terms of use</a> and <a href="about.html">Privacy policy</a>.</p>
+    </section>
+  </main>
+  <script src="assets/js/auth.js?v=1"></script>
 </body>
 </html>
