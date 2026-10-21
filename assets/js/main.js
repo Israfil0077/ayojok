@@ -10,6 +10,7 @@ const header = `
       <ul class="nav-links" id="navLinks">
         <li><a href="vendors.html" data-nav="vendors">Services</a></li>
         <li><a href="budget.html" data-nav="budget">Budget</a></li>
+        <li><a href="design.html" data-nav="design">Full design</a></li>
         <li><a href="about.html" data-nav="about">About</a></li>
         <li><a href="contact.html" data-nav="contact">Contact</a></li>
       </ul>

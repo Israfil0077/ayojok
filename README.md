@@ -18,6 +18,7 @@ course at United International University. The design won **3rd Runner-Up at the
 | [Book for Consult](https://israfil0077.github.io/ayojok/consult.html) | Consultation booking form |
 | [About](https://israfil0077.github.io/ayojok/about.html) and [Contact](https://israfil0077.github.io/ayojok/contact.html) | About the platform and a contact form |
 | [Log in](https://israfil0077.github.io/ayojok/login.html) | Demo log-in that switches the header to the logged-in view |
+| [Full design](https://israfil0077.github.io/ayojok/design.html) | All 42 screens of the Figma design (vendor pages, bookings, sign-up, dashboards, admin panels) in a full-size viewer |
 
 This is a static demo: vendors are sample data and forms do not send anything.
 

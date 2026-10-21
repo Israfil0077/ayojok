@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Full design · Ayojok</title>
+  <meta name="description" content="All 42 screens of the AYOJOK 2.0 Figma design: 3rd Runner-Up, UIU CSE Project Show, Summer 2025.">
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=3">
+</head>
+<body data-page="design">
+  <section class="hero page-hero">
+    <div class="container">
+      <h1>The full Ayojok design</h1>
+      <p>All 42 screens from the Figma file, exactly as designed. Click any screen to view it full size.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" id="gallery"></div>
+  </section>
+
+  <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Screen viewer">
+    <div class="viewer-bar">
+      <button class="btn btn-outline" id="vPrev" aria-label="Previous screen">&larr; Prev</button>
+      <span id="vTitle"></span>
+      <button class="btn btn-outline" id="vNext" aria-label="Next screen">Next &rarr;</button>
+      <button class="btn" id="vClose" aria-label="Close">Close</button>
+    </div>
+    <div class="viewer-body" id="vBody"><img id="vImg" alt=""></div>
+  </div>
+
+  <script src="assets/js/screens.js?v=1"></script>
+  <script src="assets/js/main.js?v=3"></script>
+  <script>
+    const flat = SCREENS.flatMap((g) => g.screens.map((s) => ({ ...s, group: g.group })));
+    document.getElementById("gallery").innerHTML = SCREENS.map((g) => `
+      <h2 class="gallery-title">${g.group} <small>${g.screens.length} screens</small></h2>
+      <div class="gallery-grid">
+        ${g.screens.map((s) => `
+          <button class="shot" data-slug="${s.slug}">
+            <img src="assets/screens/thumbs/${s.slug}.jpg" alt="${s.title}" loading="lazy">
+            <span>${s.title}</span>
+          </button>`).join("")}
+      </div>`).join("");
+
+    const viewer = document.getElementById("viewer");
+    let idx = 0;
+    const show = (i) => {
+      idx = (i + flat.length) % flat.length;
+      const s = flat[idx];
+      document.getElementById("vImg").src = `assets/screens/${s.slug}.jpg`;
+      document.getElementById("vImg").alt = s.title;
+      document.getElementById("vTitle").textContent = `${s.group} · ${s.title} (${idx + 1}/${flat.length})`;
+      document.getElementById("vBody").scrollTop = 0;
+      history.replaceState(null, "", `#${s.slug}`);
+    };
+    const open = (slug) => { viewer.classList.add("open"); document.body.style.overflow = "hidden"; show(flat.findIndex((s) => s.slug === slug)); };
+    const close = () => { viewer.classList.remove("open"); document.body.style.overflow = ""; history.replaceState(null, "", location.pathname); };
+    document.getElementById("gallery").addEventListener("click", (e) => { const b = e.target.closest(".shot"); if (b) open(b.dataset.slug); });
+    document.getElementById("vPrev").onclick = () => show(idx - 1);
+    document.getElementById("vNext").onclick = () => show(idx + 1);
+    document.getElementById("vClose").onclick = close;
+    document.addEventListener("keydown", (e) => {
+      if (!viewer.classList.contains("open")) return;
+      if (e.key === "ArrowRight") show(idx + 1);
+      if (e.key === "ArrowLeft") show(idx - 1);
+      if (e.key === "Escape") close();
+    });
+    if (location.hash && flat.some((s) => s.slug === location.hash.slice(1))) open(location.hash.slice(1));
+  </script>
+</body>
+</html>
