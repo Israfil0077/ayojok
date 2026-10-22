@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Ayojok</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
+</head>
+<body data-page="admin">
+  <section class="container dash">
+    <h1>Admin dashboard</h1>
+    <p class="muted" id="note">Loading…</p>
+    <div class="dash-stats" id="stats"></div>
+    <div class="dash-tabs" id="tabs"></div>
+    <div id="list"></div>
+  </section>
+
+  <script src="assets/js/main.js?v=6"></script>
+  <script type="module">
+    import { requireUser, isAdmin, all, setStatus } from "./assets/js/backend.js";
+    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const when = (t) => (t?.seconds ? new Date(t.seconds * 1000).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }) : "");
+    const note = document.getElementById("note");
+
+    const u = await requireUser();
+    if (!(await isAdmin(u))) {
+      note.innerHTML = `This page is for Ayojok admins. You are signed in as ${esc(u.email)}. <a href="account.html">Go to My bookings</a>.`;
+      throw new Error("not an admin");
+    }
+
+    // each section: collection, label, how to show a row, and the status buttons it offers
+    const sections = [
+      { name: "bookings", label: "Bookings", acts: ["confirmed", "declined"],
+        row: (b) => `<h3>${esc(b.vendor)} <small class="muted">${esc(b.category)}</small></h3>
+          <p>${esc(b.name)} · ${esc(b.phone)} · ${esc(b.userEmail)}</p>
+          <p>Event ${esc(b.date)} · ${esc(b.guests)} guests${b.message ? ` · “${esc(b.message)}”` : ""}</p>` },
+      { name: "consultations", label: "Consultations", acts: ["confirmed", "declined"],
+        row: (c) => `<h3>Token ${esc(c.token)} · ${esc(c.date)} ${esc(c.time)} <small class="muted">${esc(c.slot)}</small></h3>
+          <p>${esc(c.title)} ${esc(c.first)} ${esc(c.last)} · ${esc(c.code)} ${esc(c.phone)} · ${esc(c.email)}</p>` },
+      { name: "vendorApplications", label: "Vendor applications", acts: ["approved", "declined"],
+        row: (v) => `<h3>${esc(v.business)} <small class="muted">${esc(v.service)}</small></h3><p>${esc(v.email)}</p>` },
+      { name: "messages", label: "Messages", acts: ["read"],
+        row: (m) => `<h3>${esc(m.name)} <small class="muted">${esc(m.subject)}</small></h3>
+          <p>${esc(m.email)}${m.phone ? ` · ${esc(m.phone)}` : ""}</p><p>“${esc(m.message)}”</p>` },
+    ];
+    const data = Object.fromEntries(await Promise.all(sections.map(async (s) => [s.name, await all(s.name)])));
+    note.textContent = `Signed in as ${u.email}`;
+    document.getElementById("stats").innerHTML = sections.map((s) =>
+      `<div><b>${data[s.name].length}</b>${s.label} · ${data[s.name].filter((x) => x.status === "pending").length} pending</div>`).join("");
+
+    let current = "bookings";
+    const draw = () => {
+      const s = sections.find((x) => x.name === current);
+      document.getElementById("tabs").innerHTML = sections.map((x) =>
+        `<button class="${x.name === current ? "on" : ""}" data-tab="${x.name}">${x.label} (${data[x.name].length})</button>`).join("");
+      document.getElementById("list").innerHTML = data[current].map((d) => `
+        <article class="dash-card"><div>${s.row(d)}<p class="muted">${when(d.created)}</p></div>
+          <div class="acts"><span class="pill ${esc(d.status)}">${esc(d.status)}</span>
+            ${s.acts.map((a) => `<button class="btn btn-sm btn-outline" data-id="${d.id}" data-status="${a}">${{ confirmed: "Confirm", declined: "Decline", approved: "Approve", read: "Mark read" }[a]}</button>`).join("")}</div>
+        </article>`).join("") || `<p class="dash-empty">Nothing here yet.</p>`;
+    };
+    document.getElementById("tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { current = b.dataset.tab; draw(); } });
+    document.getElementById("list").addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-status]");
+      if (!b) return;
+      b.disabled = true;
+      await setStatus(current, b.dataset.id, b.dataset.status);
+      data[current].find((d) => d.id === b.dataset.id).status = b.dataset.status;
+      draw();
+    });
+    draw();
+  </script>
+</body>
+</html>

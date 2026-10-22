@@ -7,7 +7,7 @@
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body data-page="consult">
   <section class="section consult-page">
@@ -18,14 +18,14 @@
           <div class="step-chip"><span>1</span> Booking Information</div>
           <h3 class="consult-sub">Contact Details</h3>
           <div class="consult-grid g-code">
-            <select required aria-label="Country code"><option value="">Country Code</option><option>+880 Bangladesh</option><option>+91 India</option><option>+1 USA</option><option>+44 UK</option></select>
-            <input type="tel" placeholder="Contact Number" required>
+            <select required name="code" aria-label="Country code"><option value="">Country Code</option><option>+880 Bangladesh</option><option>+91 India</option><option>+1 USA</option><option>+44 UK</option></select>
+            <input type="tel" name="phone" placeholder="Contact Number" required>
           </div>
-          <input class="full" type="email" placeholder="Email Address" required>
+          <input class="full" type="email" name="email" placeholder="Email Address" required>
           <div class="consult-grid g-name">
-            <select aria-label="Title"><option>Title</option><option>Mr</option><option>Ms</option><option>Mrs</option></select>
-            <input placeholder="First Name" required>
-            <input placeholder="Last Name" required>
+            <select name="title" aria-label="Title"><option>Title</option><option>Mr</option><option>Ms</option><option>Mrs</option></select>
+            <input name="first" placeholder="First Name" required>
+            <input name="last" placeholder="Last Name" required>
           </div>
           <div class="consult-grid g-two">
             <input type="text" placeholder="Date Of Birth" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
@@ -40,9 +40,9 @@
           <p class="addr">United City, 100ft Madani Ave ,Dhaka Bangladesh</p>
           <div class="slot-list">
             <label>Date<input type="date" id="date" required></label>
-            <label>Time<select id="time"><option>10:00 AM</option><option>12:00 PM</option><option>3:00 PM</option><option>5:00 PM</option></select></label>
+            <label>Time<select id="time" name="time"><option>10:00 AM</option><option>12:00 PM</option><option>3:00 PM</option><option>5:00 PM</option></select></label>
             <label>Day<output id="day">-</output></label>
-            <label class="slot">Slot<select id="slot"><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label>
+            <label class="slot">Slot<select id="slot" name="slot"><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label>
           </div>
         </aside>
       </form>
@@ -56,8 +56,9 @@
     </div>
   </section>
 
-  <script src="assets/js/main.js?v=5"></script>
-  <script>
+  <script src="assets/js/main.js?v=6"></script>
+  <script type="module">
+    import { requireUser, save } from "./assets/js/backend.js";
     const date = document.getElementById("date");
     date.min = new Date().toISOString().slice(0, 10);
     date.addEventListener("change", () => {
@@ -66,8 +67,19 @@
     });
     let token = Number(localStorage.getItem("ayojok-token") || 1);
     document.getElementById("token").textContent = token;
-    document.getElementById("consultForm").addEventListener("submit", (e) => {
+    document.getElementById("consultForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const f = e.target, btn = f.querySelector(".confirm");
+      await requireUser();
+      btn.disabled = true;
+      try {
+        await save("consultations", { token, date: date.value, time: f.time.value, day: document.getElementById("day").textContent,
+          slot: f.slot.value, code: f.code.value, phone: f.phone.value, email: f.email.value, title: f.elements.title.value,
+          first: f.first.value, last: f.last.value });
+      } catch (err) {
+        btn.disabled = false; alert("Could not save your appointment. Please try again."); return;
+      }
+      btn.disabled = false;
       const c = document.getElementById("confirmed");
       c.textContent = `Appointment Confirmed · Token ${token} · ${date.value} at ${document.getElementById("time").value}`;
       c.hidden = false;

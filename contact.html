@@ -7,7 +7,7 @@
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body data-page="contact">
   <section class="section contact-section">
@@ -36,10 +36,10 @@
           </div>
           <fieldset>
             <legend>Select Subject?</legend>
-            <label class="radio"><input type="radio" name="subject" checked> General Inquiry</label>
-            <label class="radio"><input type="radio" name="subject"> Booking Support</label>
-            <label class="radio"><input type="radio" name="subject"> Become a Vendor</label>
-            <label class="radio"><input type="radio" name="subject"> Feedback</label>
+            <label class="radio"><input type="radio" name="subject" value="General Inquiry" checked> General Inquiry</label>
+            <label class="radio"><input type="radio" name="subject" value="Booking Support"> Booking Support</label>
+            <label class="radio"><input type="radio" name="subject" value="Become a Vendor"> Become a Vendor</label>
+            <label class="radio"><input type="radio" name="subject" value="Feedback"> Feedback</label>
           </fieldset>
           <label class="msg">Message<input name="message" placeholder="Write your message.." required></label>
           <div class="send-row"><button class="btn send">Send Message</button></div>
@@ -49,12 +49,23 @@
     </div>
   </section>
 
-  <script src="assets/js/main.js?v=5"></script>
-  <script>
-    document.getElementById("contactForm").addEventListener("submit", (e) => {
+  <script src="assets/js/main.js?v=6"></script>
+  <script type="module">
+    import { save } from "./assets/js/backend.js";
+    document.getElementById("contactForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      document.getElementById("sent").hidden = false;
-      e.target.reset();
+      const f = e.target, sent = document.getElementById("sent"), btn = f.querySelector(".send");
+      btn.disabled = true;
+      try {
+        await save("messages", { name: `${f.first.value} ${f.last.value}`, email: f.email.value, phone: f.phone.value,
+          subject: f.subject.value, message: f.message.value });
+        sent.textContent = "Message Successfully Sent";
+        f.reset();
+      } catch (err) {
+        sent.textContent = "Could not send your message. Please try again.";
+      }
+      sent.hidden = false;
+      btn.disabled = false;
     });
   </script>
 </body>

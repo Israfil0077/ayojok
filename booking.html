@@ -7,7 +7,7 @@
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body data-page="services">
   <section class="section" style="padding-top:30px">
@@ -15,8 +15,9 @@
   </section>
 
   <script src="assets/js/vendors-data.js?v=1"></script>
-  <script src="assets/js/main.js?v=5"></script>
-  <script>
+  <script src="assets/js/main.js?v=6"></script>
+  <script type="module">
+    import { ready, requireUser, save } from "./assets/js/backend.js";
     const p = new URLSearchParams(location.search);
     const type = VENDORS[p.get("type")] ? p.get("type") : "photographers";
     const v = VENDORS[type].find((x) => String(x.n) === p.get("v")) || VENDORS[type][0];
@@ -38,20 +39,34 @@
         <form class="bk-side" id="bkForm">
           <h3 style="margin-top:0">Get in touch</h3>
           <label>Event date<input type="date" id="bkDate" required></label>
-          <label>Guests<input type="number" min="1" value="200" required></label>
-          <label>Your name<input required></label>
-          <label>Phone<input type="tel" required></label>
-          <label>Message<textarea rows="3" placeholder="Tell ${v.name} about your event"></textarea></label>
+          <label>Guests<input type="number" min="1" value="200" name="guests" required></label>
+          <label>Your name<input name="name" required></label>
+          <label>Phone<input type="tel" name="phone" required></label>
+          <label>Message<textarea rows="3" name="message" placeholder="Tell ${v.name} about your event"></textarea></label>
+          <p class="auth-error" id="bkErr" hidden></p>
           <button class="btn">Confirm Booking</button>
+          <p class="muted" id="bkNote" style="font-size:14px">You'll be asked to log in so you can track this booking.</p>
         </form>
       </div>`;
     document.getElementById("bkDate").min = new Date().toISOString().slice(0, 10);
-    document.getElementById("bkForm").addEventListener("submit", (e) => {
+    ready.then((u) => { if (u) document.getElementById("bkNote").hidden = true; });
+    document.getElementById("bkForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const f = e.target, btn = f.querySelector("button");
+      await requireUser();
+      btn.disabled = true;
+      try {
+        await save("bookings", { vendor: v.name, category: CATEGORIES[type].title, type, vendorId: v.n, date: f.bkDate.value,
+          guests: f.guests.value, name: f.elements.name.value, phone: f.phone.value, message: f.message.value });
+      } catch (err) {
+        btn.disabled = false;
+        const el = document.getElementById("bkErr"); el.textContent = "Could not save your booking. Please try again."; el.hidden = false;
+        return;
+      }
       box.innerHTML = `<div class="congrats"><h1>Congratulations to the happy couple!</h1>
         <h2>Your Booking has been Confirmed</h2>
         <p>${v.name} will contact you about ${document.getElementById("bkDate")?.value || "your date"}.</p>
-        <a class="btn" href="vendors.html?type=${type}">Back to ${CATEGORIES[type].title}</a></div>`;
+        <a class="btn" href="account.html">See my bookings</a> <a class="btn btn-outline" href="vendors.html?type=${type}">Back to ${CATEGORIES[type].title}</a></div>`;
       window.scrollTo(0, 0);
     });
   </script>

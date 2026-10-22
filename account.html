@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My bookings · Ayojok</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
+</head>
+<body data-page="account">
+  <section class="container dash">
+    <h1 id="hello">My Ayojok</h1>
+    <p class="muted" id="plan">Loading your account…</p>
+    <div class="dash-stats" id="stats"></div>
+    <div class="dash-tabs">
+      <button class="on" data-tab="bookings">Vendor bookings</button>
+      <button data-tab="consultations">Consultations</button>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <script src="assets/js/main.js?v=6"></script>
+  <script type="module">
+    import { requireUser, mine, profile } from "./assets/js/backend.js";
+    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const when = (t) => (t?.seconds ? new Date(t.seconds * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "");
+
+    const u = await requireUser();
+    const [me, bookings, consultations] = await Promise.all([profile(), mine("bookings"), mine("consultations")]);
+    document.getElementById("hello").textContent = `Hi, ${me.first || u.displayName || "there"}!`;
+    document.getElementById("plan").textContent = [me.partner && `Planning with ${me.partner}`, me.date && `Wedding date ${me.date}`,
+      me.city, me.guests && `${me.guests} guests`].filter(Boolean).join(" · ") || u.email;
+    document.getElementById("stats").innerHTML = `
+      <div><b>${bookings.length}</b>Vendor bookings</div>
+      <div><b>${consultations.length}</b>Consultations</div>
+      <div><b>${bookings.filter((b) => b.status === "confirmed").length}</b>Confirmed</div>`;
+
+    const cards = {
+      bookings: () => bookings.map((b) => `
+        <article class="dash-card"><div>
+          <h3>${esc(b.vendor)}</h3>
+          <p>${esc(b.category)} · Event ${esc(b.date)} · ${esc(b.guests)} guests</p>
+          <p class="muted">Requested ${when(b.created)}</p></div>
+          <span class="pill ${esc(b.status)}">${esc(b.status)}</span></article>`).join("")
+        || `<p class="dash-empty">No bookings yet. <a href="services.html">Find a vendor</a> and press Request pricing.</p>`,
+      consultations: () => consultations.map((c) => `
+        <article class="dash-card"><div>
+          <h3>Token ${esc(c.token)} · ${esc(c.date)} at ${esc(c.time)}</h3>
+          <p>${esc(c.day)} · ${esc(c.slot)} · United City, 100ft Madani Ave, Dhaka</p>
+          <p class="muted">Booked ${when(c.created)}</p></div>
+          <span class="pill ${esc(c.status)}">${esc(c.status)}</span></article>`).join("")
+        || `<p class="dash-empty">No consultations yet. <a href="consult.html">Book one</a>.</p>`,
+    };
+    const tabs = document.querySelectorAll(".dash-tabs button");
+    const show = (t) => { tabs.forEach((b) => b.classList.toggle("on", b.dataset.tab === t)); document.getElementById("list").innerHTML = cards[t](); };
+    tabs.forEach((b) => (b.onclick = () => show(b.dataset.tab)));
+    show(location.hash === "#consultations" ? "consultations" : "bookings");
+  </script>
+</body>
+</html>

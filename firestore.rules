@@ -1,0 +1,40 @@
+rules_version = '2';
+// Ayojok Firestore security rules.
+// - Signed-in users can create bookings/consultations and read only their own.
+// - Anyone can send a contact message or a vendor application (create only).
+// - Admins (listed in /admins/{uid}) can read and update everything.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function owns(data) { return signedIn() && data.uid == request.auth.uid; }
+
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin();
+    }
+    match /bookings/{id} {
+      allow create: if owns(request.resource.data);
+      allow read: if owns(resource.data) || isAdmin();
+      allow update: if isAdmin();
+    }
+    match /consultations/{id} {
+      allow create: if owns(request.resource.data);
+      allow read: if owns(resource.data) || isAdmin();
+      allow update: if isAdmin();
+    }
+    match /messages/{id} {
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message'])
+                    && request.resource.data.message is string && request.resource.data.message.size() < 5000;
+      allow read, update: if isAdmin();
+    }
+    match /vendorApplications/{id} {
+      allow create: if request.resource.data.keys().hasAll(['business', 'service', 'email']);
+      allow read, update: if isAdmin();
+    }
+  }
+}

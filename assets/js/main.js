@@ -1,6 +1,7 @@
-// AYOJOK front-end demo: shared header/footer, demo login, vendors, budget calculator and forms.
+// AYOJOK shared header/footer, tips tabs and small demo forms. Sign-in state comes from backend.js.
 const page = document.body.dataset.page;
-const user = JSON.parse(localStorage.getItem("ayojok-user") || "null");
+let user = null;
+try { user = JSON.parse(localStorage.getItem("ayojok-user") || "null"); } catch (e) {}
 
 const header = `
   <header class="site-header">
@@ -11,12 +12,8 @@ const header = `
         <li><a href="about.html" data-nav="about">About</a></li>
         <li><a href="contact.html" data-nav="contact">Contact</a></li>
       </ul>
-      <div class="nav-actions">
-        ${user
-          ? `<button class="btn btn-sm" id="logout">Log out</button><span class="avatar" title="${user.name}">${user.name[0].toUpperCase()}</span>`
-          : `<a class="btn btn-sm" href="login.html">Login</a><a class="btn btn-sm" href="signup.html">Sign up</a>`}
-        <button class="menu-toggle" id="menuToggle" aria-label="Menu">&#9776;</button>
-      </div>
+      <div class="nav-actions"><span id="navActions" class="nav-user"></span>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu">&#9776;</button></div>
     </nav>
   </header>`;
 
@@ -39,14 +36,29 @@ const footer = `
       </div>
     </div>
     <p class="copyright">© 2025 Ayojok · Based on the AYOJOK 2.0 Figma design, 3rd Runner-Up at the UIU CSE Project Show, Summer 2025 ·
-      <a href="design.html">See all 42 design screens</a> · Demo site: forms and bookings are not saved</p>
+      <a href="design.html">See all 42 design screens</a></p>
   </footer>`;
 
 document.body.insertAdjacentHTML("afterbegin", header);
 document.body.insertAdjacentHTML("beforeend", footer);
 document.querySelector(`[data-nav="${page}"]`)?.classList.add("active");
 document.getElementById("menuToggle").onclick = () => document.getElementById("navLinks").classList.toggle("open");
-document.getElementById("logout")?.addEventListener("click", () => { localStorage.removeItem("ayojok-user"); location.href = "index.html"; });
+
+// login / sign-up buttons, or the signed-in user's links; backend.js calls this when the sign-in state changes
+window.setHeaderUser = (u) => {
+  document.getElementById("navActions").innerHTML = u
+    ? `${u.admin ? `<a class="btn btn-sm btn-outline" href="admin.html">Admin</a>` : ""}
+       <a class="btn btn-sm btn-outline" href="account.html">My bookings</a>
+       <button class="btn btn-sm" id="logout">Log out</button>
+       <a class="avatar" href="account.html" title="${u.name.replace(/"/g, "")}">${u.name[0].toUpperCase()}</a>`
+    : `<a class="btn btn-sm" href="login.html">Login</a><a class="btn btn-sm" href="signup.html">Sign up</a>`;
+  document.getElementById("logout")?.addEventListener("click", async () => {
+    try { localStorage.removeItem("ayojok-user"); } catch (e) {}
+    await window.ayojokSignOut?.();
+    location.href = "index.html";
+  });
+};
+setHeaderUser(user);
 
 // any form marked data-demo-form shows a friendly message instead of sending data
 document.querySelectorAll("form[data-demo-form]").forEach((form) => {
@@ -69,13 +81,5 @@ document.querySelectorAll(".tabs button").forEach((b) =>
     document.querySelectorAll(".ideas img").forEach((img, i) => (img.src = `assets/img/idea-${order[i]}.jpg`));
   })
 );
-
-// ---------------------------------------------------------------- login (demo)
-document.getElementById("loginForm")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const name = e.target.name.value.trim() || "Guest";
-  localStorage.setItem("ayojok-user", JSON.stringify({ name }));
-  location.href = "index.html";
-});
 
 const taka = (n) => "৳ " + Number(n).toLocaleString("en-US");

@@ -7,25 +7,22 @@
   <link rel="icon" href="assets/img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body class="auth-body">
   <main class="auth">
     <img class="auth-photo" id="authPhoto" src="assets/img/auth/forgot.jpg" alt="">
     <section class="auth-panel">
       <a class="auth-logo" href="index.html">Ayojok</a>
-      <p class="auth-success soft" id="done" hidden>Password successfully changed</p>
+      <p class="auth-success soft" id="done" hidden>Check your inbox: we sent you a link to reset your password</p>
       <form class="auth-form" id="forgotForm">
         <label>Email<input type="email" name="email" required autocomplete="email"></label>
-        <label>New password (8 or more characters)
-          <span class="pw"><input type="password" name="password" minlength="8" required autocomplete="new-password">
-          <button type="button" class="eye" aria-label="Show password">&#128065;</button></span></label>
-        <button class="auth-btn">Let's go</button>
+        <button class="auth-btn">Send reset link</button>
       </form>
       <p class="auth-link"><a href="login.html">Back to <b>Log in</b></a></p>
       <p class="auth-terms">By creating Ayojok account you agree to our <a href="about.html">Terms of use</a> and <a href="about.html">Privacy policy</a>.</p>
     </section>
   </main>
-  <script src="assets/js/auth.js?v=1"></script>
+  <script type="module" src="assets/js/auth.js?v=2"></script>
 </body>
 </html>
