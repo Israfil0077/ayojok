@@ -49,3 +49,7 @@ Open `index.html` in a browser, or serve the folder:
 ```bash
 python -m http.server 8000
 ```
+
+## License
+
+Code is released under the [MIT License](LICENSE). Images come from the Figma design and belong to their original owners.
